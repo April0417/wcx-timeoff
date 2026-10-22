@@ -1,0 +1,36 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+project.lock.json
+artifacts/
+
+## Angular / Node
+node_modules/
+dist/
+.angular/
+coverage/
+npm-debug.log*
+.npm/
+
+## Secrets and local env
+.env
+.env.local
+appsettings.*.local.json
+**/secrets.json
+
+## IDE / OS
+.vs/
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+## Test / tooling
+TestResults/
+*.log

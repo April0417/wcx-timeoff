@@ -1,0 +1,9 @@
+{
+  "Jwt": {
+    "Key": "DEV-ONLY-wcx-timeoff-exam-jwt-key-change-me!"
+  },
+  "Mongo": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "wcx_timeoff"
+  }
+}
