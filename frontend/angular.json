@@ -54,8 +54,7 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [],
             "styles": ["src/styles.css"],
-            "scripts": [],
-            "karmaConfig": "karma.conf.js"
+            "scripts": []
           }
         }
       }
