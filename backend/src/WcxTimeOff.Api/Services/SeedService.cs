@@ -17,7 +17,7 @@ public sealed class SeedService(MongoContext context, IPasswordHasher<User> pass
             return;
         }
 
-        var admin = CreateUser("Avery Admin", "admin@wcx.local", "Admin123!", UserRole.Admin);
+        var admin = CreateUser("April Ryme Gumafelix", "admin@wcx.local", "Admin123!", UserRole.Admin);
         var jordan = CreateUser("Jordan Lee", "jordan@wcx.local", "Agent123!", UserRole.Agent);
         var sam = CreateUser("Sam Patel", "sam@wcx.local", "Agent123!", UserRole.Agent);
         var riley = CreateUser("Riley Chen", "riley@wcx.local", "Agent123!", UserRole.Agent);

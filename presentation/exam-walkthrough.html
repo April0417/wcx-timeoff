@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WCX Time Off — Exam Walkthrough</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1c1915;
+      --muted: #5c564c;
+      --line: #d9d2c5;
+      --card: #fffdf8;
+      --accent: #0f6e56;
+      --accent-soft: #e5f3ee;
+      --warn: #8a4b12;
+      --warn-soft: #f8efe4;
+      --code: #2a2622;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #2a2622; color: var(--ink); font-family: "Segoe UI", Candara, sans-serif; }
+    button, kbd { font-family: inherit; }
+    .deck { height: 100%; display: grid; grid-template-rows: 1fr auto; }
+    .stage { display: grid; place-items: center; padding: 24px; }
+    .slide {
+      display: none;
+      width: min(1120px, 100%);
+      height: min(680px, calc(100vh - 92px));
+      background: var(--bg);
+      border: 1px solid #cfc6b8;
+      padding: 48px 56px 40px;
+      overflow: auto;
+    }
+    .slide.active { display: flex; flex-direction: column; }
+    .kicker { margin: 0 0 10px; letter-spacing: 0.12em; text-transform: uppercase; font-size: 13px; color: var(--accent); font-weight: 650; }
+    h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.1; font-weight: 650; letter-spacing: -0.02em; }
+    h2 { margin: 0 0 18px; font-size: 32px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
+    p { margin: 0; color: var(--ink); font-size: 18px; line-height: 1.45; }
+    .lead { font-size: 22px; max-width: 38em; }
+    .muted { color: var(--muted); }
+    ul { margin: 8px 0 0; padding: 0; list-style: none; }
+    li { position: relative; padding: 8px 0 8px 18px; font-size: 18px; line-height: 1.4; }
+    li::before { content: ""; position: absolute; left: 0; top: 17px; width: 7px; height: 7px; background: var(--accent); }
+    .grid { display: grid; gap: 14px; margin-top: 8px; }
+    .g2 { grid-template-columns: 1fr 1fr; }
+    .g3 { grid-template-columns: 1fr 1fr 1fr; }
+    .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .card { background: var(--card); border: 1px solid var(--line); padding: 16px 18px; }
+    .card h3 { margin: 0 0 6px; font-size: 16px; }
+    .card p, .card li { font-size: 15px; }
+    .card li { padding-top: 4px; padding-bottom: 4px; }
+    .card li::before { top: 12px; }
+    code, .mono { font-family: Consolas, "Cascadia Mono", monospace; font-size: 0.92em; }
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+    .chip { background: var(--card); border: 1px solid var(--line); padding: 8px 12px; font-size: 15px; }
+    .arrow { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 15px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 650; }
+    .steps { counter-reset: step; }
+    .steps li { padding-left: 36px; }
+    .steps li::before { counter-increment: step; content: counter(step); width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: white; font-size: 12px; display: grid; place-items: center; top: 9px; }
+    .note {
+      display: none;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    body.show-notes .note { display: block; }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 20px 14px; color: #efeae2; font-size: 13px; }
+    .bar button { background: transparent; color: inherit; border: 1px solid #6d655c; padding: 6px 10px; cursor: pointer; }
+    .bar button:hover { border-color: #efeae2; }
+    .dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 0; background: #6d655c; }
+    .dots button.on { background: #efeae2; }
+    .title-slide { justify-content: flex-end; }
+    .title-slide h1 { font-size: 54px; max-width: 14ch; }
+    .footer-meta { margin-top: 22px; color: var(--muted); font-size: 16px; }
+    .warn { background: var(--warn-soft); border: 1px solid #ead7c4; padding: 12px 14px; color: var(--warn); font-size: 15px; }
+    .schema { font-family: Consolas, "Cascadia Mono", monospace; font-size: 14px; line-height: 1.45; background: var(--code); color: #f3efe7; padding: 16px 18px; white-space: pre; overflow: auto; }
+    @media (max-width: 800px) {
+      .slide { padding: 28px 22px; height: auto; min-height: calc(100vh - 92px); }
+      h1 { font-size: 34px; }
+      .g2, .g3, .g4 { grid-template-columns: 1fr; }
+      .title-slide h1 { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="stage" id="stage"></div>
+    <div class="bar">
+      <div>
+        <button type="button" id="prev">Previous</button>
+        <button type="button" id="next">Next</button>
+        <button type="button" id="notes">Speaker notes</button>
+      </div>
+      <div class="dots" id="dots"></div>
+      <div id="count">1 / 1</div>
+    </div>
+  </div>
+
+  <template id="slides">
+    <section class="slide title-slide">
+      <p class="kicker">WCX Time Off exam</p>
+      <h1>Time-off and accrual walkthrough</h1>
+      <p class="lead">Codebase, design patterns, database schema, and a live workflow.</p>
+      <p class="footer-meta">April Ryme Gumafelix · Admin account · Angular, .NET, MongoDB</p>
+      <p class="note">Open with your name and the four things the exam asks you to walk through. Say you will show the running app after the design, then come back to the screen for questions.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Agenda</p>
+      <h2>What this walkthrough covers</h2>
+      <div class="grid g2">
+        <div class="card"><h3>1. Codebase</h3><p>Where the Angular UI, the API, and the tests live, and how a request moves through them.</p></div>
+        <div class="card"><h3>2. Design patterns</h3><p>Layers, repositories, DTOs, role guards, and the approval claim that prevents a double deduction.</p></div>
+        <div class="card"><h3>3. Database schema</h3><p>Three MongoDB collections: users, credit balances, and time-off requests.</p></div>
+        <div class="card"><h3>4. Live workflow</h3><p>Admin credits, an agent request, then approve and deny, with the balance updating from the API.</p></div>
+      </div>
+      <p class="note">Keep this under a minute. Tell them the demo accounts are already seeded, so you will not create users during the exam.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Exam scope</p>
+      <h2>Three features, one balance</h2>
+      <ul>
+        <li><strong>Admin credit overview.</strong> Every agent shows earned credits, taken credits, and available balance. Available is earned minus taken. An admin can edit earned credits.</li>
+        <li><strong>Agent request.</strong> A form for a date range. Full day is 8 hours per calendar day. Partial day is hours the agent types, on one date, at most 8.</li>
+        <li><strong>Approval queue.</strong> Approve adds the hours to taken credits. Deny changes the status and leaves the balance alone.</li>
+      </ul>
+      <p class="note">Quote the formula out loud: available equals earned minus taken. The UI displays the API value. It does not calculate a second balance of its own for the table.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Stack</p>
+      <h2>What is running</h2>
+      <table>
+        <thead><tr><th>Piece</th><th>Choice</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>Frontend</td><td>Angular 19 standalone components</td><td><code>frontend/</code> · http://localhost:4200</td></tr>
+          <tr><td>Backend</td><td>.NET 9 ASP.NET Core Web API</td><td><code>backend/src/WcxTimeOff.Api</code> · http://localhost:5080</td></tr>
+          <tr><td>Database</td><td>MongoDB 7, document model</td><td><code>mongodb://localhost:27017</code> · database <code>wcx_timeoff</code></td></tr>
+          <tr><td>Auth</td><td>JWT bearer, roles Admin and Agent</td><td>Login returns the token. The interceptor attaches it.</td></tr>
+          <tr><td>Tests</td><td>xUnit on the API, Karma on the rules</td><td><code>dotnet test</code> and <code>npm test</code></td></tr>
+        </tbody>
+      </table>
+      <p class="note">If they ask why .NET 9 instead of the older “.NET Core” name: this is the current ASP.NET Core line. MongoDB is the document database the exam requires.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Codebase</p>
+      <h2>Two apps, one contract</h2>
+      <div class="grid g2">
+        <div class="card">
+          <h3>frontend/src/app</h3>
+          <ul>
+            <li><code>pages/</code> login, credit table, credit edit, request form, history, approval queue</li>
+            <li><code>core/api.service.ts</code> typed calls for every exam endpoint</li>
+            <li><code>core/auth.guard.ts</code> login wall and Admin / Agent routes</li>
+            <li><code>core/time-off-rules.ts</code> the same hour, overlap, and balance checks as the API</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>backend/src/WcxTimeOff.Api</h3>
+          <ul>
+            <li><code>Controllers</code> HTTP, role attributes, status codes</li>
+            <li><code>Services</code> login, credit edits, create, approve, deny</li>
+            <li><code>Data</code> Mongo context, indexes, repositories</li>
+            <li><code>Domain</code> users, balances, requests, <code>TimeOffCalculator</code></li>
+            <li><code>Contracts</code> request and response DTOs</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Point at the folders in the editor if you have it open. Say controllers do not contain the business rules. Services do.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Codebase</p>
+      <h2>A request crosses four layers</h2>
+      <div class="flow">
+        <span class="chip">Angular form</span><span class="arrow">→</span>
+        <span class="chip">ApiService + JWT</span><span class="arrow">→</span>
+        <span class="chip">Controller</span><span class="arrow">→</span>
+        <span class="chip">TimeOffService</span><span class="arrow">→</span>
+        <span class="chip">Repository</span><span class="arrow">→</span>
+        <span class="chip">MongoDB</span>
+      </div>
+      <ul>
+        <li>The agent id on create comes from the JWT, not from the form body.</li>
+        <li>The UI blocks a bad request first. The API repeats the date, overlap, and balance checks.</li>
+        <li>Errors come back as <code>{ error, message }</code> and the form shows that message.</li>
+      </ul>
+      <p class="note">This is the line to say if they ask about server validation. Both sides enforce the rules. The database is the source of truth.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Design patterns</p>
+      <h2>How the code is organized</h2>
+      <div class="grid g2">
+        <div class="card"><h3>Layered architecture</h3><p>HTTP, use cases, persistence, and domain rules sit in separate folders. Tests call the services with in-memory fakes.</p></div>
+        <div class="card"><h3>Repository</h3><p><code>IUserRepository</code>, <code>ICreditBalanceRepository</code>, and <code>ITimeOffRequestRepository</code> hide Mongo queries.</p></div>
+        <div class="card"><h3>DTO boundary</h3><p>Controllers accept and return contracts. Password hashes never leave the user document.</p></div>
+        <div class="card"><h3>Dependency injection</h3><p>Mongo, repositories, and services are registered in <code>Program.cs</code>. Controllers take interfaces.</p></div>
+        <div class="card"><h3>Role-based access</h3><p><code>[Authorize(Roles = "Admin")]</code> on admin controllers. Angular <code>roleGuard</code> hides the other role’s pages.</p></div>
+        <div class="card"><h3>Calculated balance</h3><p>Available is not stored. It is <code>EarnedCredits - TakenCredits</code> every time a balance is read.</p></div>
+      </div>
+      <p class="note">Pick two if time is short: repository plus calculated balance. Mention the claim pattern on the next slide rather than listing every pattern.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Design patterns</p>
+      <h2>Approval cannot deduct twice</h2>
+      <ol class="steps">
+        <li>Claim the request only while its status is still Pending, and set it to Approved in that same update.</li>
+        <li>Increment <code>TakenCredits</code> only when <code>EarnedCredits</code> is still at least taken plus the requested hours.</li>
+        <li>If that credit update fails, put the request back to Pending and return a conflict.</li>
+      </ol>
+      <p style="margin-top:16px">Deny uses the same pending claim and then stops. Taken credits are not touched.</p>
+      <p class="note">Say this replaces a multi-document transaction, because a standalone MongoDB node has no replica set. The condition on the update is the lock.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Database schema</p>
+      <h2>Three collections in wcx_timeoff</h2>
+      <div class="schema">users
+  _id, Name, Email (unique), PasswordHash, Role: Admin | Agent
+
+creditBalances
+  _id, AgentId (unique), EarnedCredits, TakenCredits, Version
+  available = EarnedCredits − TakenCredits   (not stored)
+
+timeOffRequests
+  _id, AgentId, StartDate, EndDate
+  DurationType: FullDay | PartialDay
+  RequestedHours, Reason
+  Status: Pending | Approved | Denied
+  CreatedAt, UpdatedAt, ReviewedBy, ReviewedAt</div>
+      <p class="note">Draw the relationship in words: one user who is an Agent has one credit balance and many requests. Admin users have no credit document. ReviewedBy points at the admin user id.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Database schema</p>
+      <h2>Indexes and seed data</h2>
+      <table>
+        <thead><tr><th>Index</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>ux_users_email</code></td><td>One account per email. Login looks up by email.</td></tr>
+          <tr><td><code>ux_creditBalances_agentId</code></td><td>One balance document per agent.</td></tr>
+          <tr><td><code>ix_requests_agent_dates</code></td><td>Overlap checks read an agent’s date ranges.</td></tr>
+          <tr><td><code>ix_requests_status</code></td><td>The approval queue lists Pending.</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>Role</th><th>Name</th><th>Email</th><th>Password</th><th>Earned hours</th></tr></thead>
+        <tbody>
+          <tr><td>Admin</td><td>April Ryme Gumafelix</td><td><code>admin@wcx.local</code></td><td><code>Admin123!</code></td><td>—</td></tr>
+          <tr><td>Agent</td><td>Jordan Lee</td><td><code>jordan@wcx.local</code></td><td><code>Agent123!</code></td><td>80</td></tr>
+          <tr><td>Agent</td><td>Sam Patel</td><td><code>sam@wcx.local</code></td><td><code>Agent123!</code></td><td>40</td></tr>
+          <tr><td>Agent</td><td>Riley Chen</td><td><code>riley@wcx.local</code></td><td><code>Agent123!</code></td><td>16</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Seed runs once, only when the users collection is empty. Say there is one admin and three agents, which meets the exam’s two-to-three agents.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Rules</p>
+      <h2>What the server rejects</h2>
+      <table>
+        <thead><tr><th>Rule</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Full day</td><td>8 hours times each inclusive calendar day. Weekends count.</td></tr>
+          <tr><td>Partial day</td><td>One date. Hours must be greater than 0 and at most 8.</td></tr>
+          <tr><td>Overlap</td><td>A new range that touches a Pending or Approved request for the same agent is rejected. Denied does not block.</td></tr>
+          <tr><td>Balance</td><td>Hours must fit in requestable balance: available minus other pending hours.</td></tr>
+          <tr><td>Earned edit</td><td>An admin cannot set earned credits below the agent’s taken credits.</td></tr>
+        </tbody>
+      </table>
+      <p class="note">If they ask why pending hours are reserved: two pending requests could each be under the available balance and still overdraw together. Requestable balance prevents that. It is stricter than the exam line, and it still blocks anything over available.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Live workflow</p>
+      <h2>Before you share the app</h2>
+      <ol class="steps">
+        <li>MongoDB is listening on port 27017.</li>
+        <li>API: <code>dotnet run</code> in <code>backend/src/WcxTimeOff.Api</code> → http://localhost:5080</li>
+        <li>UI: <code>npm start</code> in <code>frontend</code> → http://localhost:4200</li>
+        <li>Swagger, if asked: http://localhost:5080/swagger</li>
+      </ol>
+      <p class="warn" style="margin-top:18px">Sign out between roles. The header name comes from the login response, so a fresh login shows April Ryme Gumafelix.</p>
+      <p class="note">Switch to the browser now. Leave this slide up only if something is still starting.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Live workflow · 1</p>
+      <h2>Admin credit overview</h2>
+      <ol class="steps">
+        <li>Sign in as <code>admin@wcx.local</code> / <code>Admin123!</code>.</li>
+        <li>Open Agent credits. Read Jordan 80, Sam 40, Riley 16. Taken is 0, so available matches earned.</li>
+        <li>Point at the columns: Earned, Taken, Available. Say available is calculated by the API.</li>
+        <li>Edit Sam’s earned credits to a new number, save, and return to the overview. Available moves with earned.</li>
+        <li>Optional: try a value below taken credits after an approval. The API rejects it.</li>
+      </ol>
+      <p class="note">Say you are only editing earned credits. Taken credits change only when a request is approved.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Live workflow · 2</p>
+      <h2>Agent files a request</h2>
+      <ol class="steps">
+        <li>Sign out. Sign in as <code>jordan@wcx.local</code> / <code>Agent123!</code>.</li>
+        <li>Submit a full-day request for one date. The preview shows 8 hours.</li>
+        <li>Submit a partial-day request on a different date, for example 4 hours.</li>
+        <li>Repeat the first date. The form and the API both reject the overlap.</li>
+        <li>Ask for more hours than the requestable balance. Both sides block it.</li>
+      </ol>
+      <p class="note">Use dates that do not already have a pending or approved request. If the database already has Jordan’s requests from practice, pick fresh dates or deny the old ones first.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Live workflow · 3</p>
+      <h2>Approve, deny, then show the balance</h2>
+      <ol class="steps">
+        <li>Sign back in as the admin and open Approval queue.</li>
+        <li>Approve the full-day request. Say taken credits increase by those hours, once.</li>
+        <li>Deny the partial-day request. Say the status becomes Denied and taken credits stay the same.</li>
+        <li>Open Agent credits. Jordan’s taken credits match only the approved hours. Available is earned minus that taken amount.</li>
+        <li>Approving or denying the same request again returns a conflict. It is no longer Pending.</li>
+      </ol>
+      <p class="note">This is the close of the demo. Restate the exam sentence: approval deducts by adding to taken credits; denial leaves the balance unchanged; the overview reads the updated documents.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">If they ask</p>
+      <h2>Decisions to explain in one sentence</h2>
+      <ul>
+        <li><strong>Full day across a range.</strong> Eight hours is the length of one calendar day, so Monday through Friday is 40 hours.</li>
+        <li><strong>Requestable balance.</strong> Other pending hours are reserved so several open requests cannot overdraw the same available balance.</li>
+        <li><strong>No work calendar.</strong> Weekends count. The calculator is isolated so a weekday calendar can be added later.</li>
+        <li><strong>Denied overlap.</strong> A denied request does not occupy the dates. Pending and approved requests do.</li>
+      </ul>
+      <p class="note">Do not volunteer that GitHub is empty unless they ask about the repository. If they do, say the solution is in local git and the public remote is the remaining deliverable.</p>
+    </section>
+
+    <section class="slide title-slide">
+      <p class="kicker">Close</p>
+      <h2>The balance stays on the server</h2>
+      <p class="lead">Admins grant earned hours. Agents request time. Approval is the only write that increases taken credits. The overview always shows earned minus taken.</p>
+      <p class="footer-meta">Questions on the schema, the claim update, or the live accounts.</p>
+      <p class="note">Stop talking and let them ask. If the room is quiet, offer to open one service method: TimeOffService.ApproveAsync or TimeOffCalculator.</p>
+    </section>
+  </template>
+
+  <script>
+    const nodes = Array.from(document.querySelector("#slides").content.children);
+    const stage = document.querySelector("#stage");
+    const dots = document.querySelector("#dots");
+    const count = document.querySelector("#count");
+    nodes.forEach((node, index) => {
+      stage.appendChild(node);
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("aria-label", "Slide " + (index + 1));
+      dot.addEventListener("click", () => show(index));
+      dots.appendChild(dot);
+    });
+    const slides = Array.from(stage.children);
+    let current = 0;
+    function show(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+      Array.from(dots.children).forEach((dot, i) => dot.classList.toggle("on", i === current));
+      count.textContent = (current + 1) + " / " + slides.length;
+      slides[current].scrollTop = 0;
+    }
+    document.querySelector("#prev").addEventListener("click", () => show(current - 1));
+    document.querySelector("#next").addEventListener("click", () => show(current + 1));
+    document.querySelector("#notes").addEventListener("click", () => {
+      document.body.classList.toggle("show-notes");
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        show(current + 1);
+      } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        show(current - 1);
+      } else if (event.key === "Home") {
+        show(0);
+      } else if (event.key === "End") {
+        show(slides.length - 1);
+      } else if (event.key === "n" || event.key === "N") {
+        document.body.classList.toggle("show-notes");
+      }
+    });
+    show(0);
+  </script>
+</body>
+</html>
